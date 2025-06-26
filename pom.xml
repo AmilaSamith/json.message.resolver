@@ -1,0 +1,140 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jsonresolver</groupId>
+  <artifactId>json.message.resolver</artifactId>
+  <packaging>bundle</packaging>
+  <version>1.0</version>
+  <name>json-message-resolver</name>
+  <url>http://maven.apache.org</url>
+  <description>Custom Log4j2 EventResolver for JSON message formatting</description>
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <log4j2.version>2.17.1</log4j2.version>
+    <jackson.version>2.16.1</jackson.version>
+    <gson.version>2.10.1</gson.version>
+  </properties>
+
+  <dependencies>
+    <!-- Log4j2 Core -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Log4j2 JSON Template Layout -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-layout-template-json</artifactId>
+      <version>${log4j2.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Jackson for JSON processing -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Gson for better JSON parsing -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Maven Bundle Plugin for OSGi -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>5.1.8</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>org.jsonresolver.json.message.resolver</Bundle-SymbolicName>
+            <Bundle-Name>Custom Log4j2 JSON Message Resolver</Bundle-Name>
+            <Bundle-Version>${project.version}</Bundle-Version>
+            <Bundle-Description>${project.description}</Bundle-Description>
+            <Fragment-Host>org.ops4j.pax.logging.pax-logging-log4j2</Fragment-Host>
+            <Export-Package>
+              org.jsonresolver
+            </Export-Package>
+            <Import-Package>
+              *;resolution:=optional
+            </Import-Package>
+            <_removeheaders>
+              Import-Package
+            </_removeheaders>
+            <_importpackage>
+              org.apache.logging.log4j.core.config.plugins,
+              org.apache.logging.log4j.core.config.plugins.util,
+              org.apache.logging.log4j.layout.template.json.resolver,
+              org.apache.logging.log4j.layout.template.json.util,
+              org.apache.logging.log4j.core,
+              org.apache.logging.log4j.core.layout.template.json,
+              org.apache.logging.log4j.core.config,
+              org.apache.logging.log4j.core.impl,
+              org.apache.logging.log4j.message,
+              com.fasterxml.jackson.core,
+              com.fasterxml.jackson.databind,
+              com.fasterxml.jackson.databind.node,
+              com.google.gson,
+              *;resolution:=optional
+            </_importpackage>
+            <Include-Resource>
+              @target/classes
+            </Include-Resource>
+            <Require-Bundle></Require-Bundle>
+            <DynamicImport-Package>*</DynamicImport-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>8</source>
+          <target>8</target>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.apache.logging.log4j</groupId>
+              <artifactId>log4j-core</artifactId>
+              <version>${log4j2.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <compilerArgs>
+            <arg>-processor</arg>
+            <arg>org.apache.logging.log4j.core.config.plugins.processor.PluginProcessor</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
