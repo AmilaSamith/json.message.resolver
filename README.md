@@ -23,6 +23,9 @@ You can use this as a reference project to implement your custom logging require
     appender.CARBON_CONSOLE.layout.type = JsonTemplateLayout
     appender.CARBON_CONSOLE.layout.eventTemplate = {"Date":{"$resolver":"timestamp","pattern":{"format":"yyyy-MM-dd HH:mm:ss,SSS"}},"Level":{"$resolver":"level","field":"name"},"Component":{"$resolver":"logger","field":"name"},"Message":{"$resolver":"JsonMessage", "components": ["org.apache.synapse.mediators.builtin.LogMediator"]}}
     ```
+   
+   **NOTE**
+   The target components to which this resolver applies can be configured by listing their names under the "components" field.
 
 4. **Restart WSO2 MI Server**
    - cd `<MI_HOME>/bin/`

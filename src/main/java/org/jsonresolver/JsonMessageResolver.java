@@ -14,8 +14,12 @@ import org.apache.logging.log4j.layout.template.json.resolver.EventResolver;
 import org.apache.logging.log4j.layout.template.json.resolver.TemplateResolverConfig;
 import org.apache.logging.log4j.layout.template.json.util.JsonWriter;
 
-import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -297,11 +301,11 @@ public final class JsonMessageResolver implements EventResolver {
         if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
             return Boolean.parseBoolean(value);
         }
-        try {
-            return new BigDecimal(value);
-        } catch (NumberFormatException e) {
-            // Not a number
-        }
+//        try {
+//            return new BigDecimal(value);
+//        } catch (NumberFormatException e) {
+//            // Not a number
+//        }
         if (value.startsWith("\"") && value.endsWith("\"") && value.length() > 1) {
             return value.substring(1, value.length() - 1);
         }
@@ -493,12 +497,18 @@ public final class JsonMessageResolver implements EventResolver {
         } else if (node.isBoolean()) {
             return node.booleanValue();
         } else if (node.isNumber()) {
-            if (node.isInt()) {
-                return node.intValue();
-            } else if (node.isLong()) {
+            if (node.isIntegralNumber()) {
                 return node.longValue();
+            } else if (node.isFloatingPointNumber()) {
+                double value = node.doubleValue();
+                // Check if it's actually a whole number
+                if (value == (long) value) {
+                    return (long) value;  // Return as long to avoid scientific notation
+                } else {
+                    return value;  // Return as double for actual decimals
+                }
             } else {
-                return node.doubleValue();
+                return node.numberValue();
             }
         } else if (node.isTextual()) {
             return node.textValue();
